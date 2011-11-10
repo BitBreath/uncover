@@ -1,5 +1,9 @@
 #!/bin/bash
 
+###########
+#BitBreath#
+###########
+
 FILES="";
 SHOW=0;
 HIDE=0;
