@@ -1,0 +1,72 @@
+#!/bin/bash
+
+FILES="";
+SHOW=0;
+HIDE=0;
+
+function USAGE ()
+{
+    echo 'Usage:'
+	echo '       -h:   show help.'
+	echo '       -d:   file which needs to be hidden/shown.'
+	echo '       -i:   hide the file provided.'
+	echo '       -s:   show the file provided.'
+}
+
+#process arguments
+while getopts "ishf:" option
+do
+    case $option in
+    	i) HIDE=1;;
+    	s) SHOW=1;;
+        h) USAGE
+           exit 0;;
+        f) FILES="$OPTARG";;
+        *) USAGE
+           exit 0;;
+    esac
+done
+
+shift $(($OPTIND - 1))
+
+#not both hide and show
+if [ $SHOW -eq 1 -a $HIDE -eq 1 ]; then
+	echo 'Unvalid arguments. Use -h for more information.'
+	exit 0;
+fi
+
+if [ $SHOW -eq 0 -a $HIDE -eq 0 ]; then
+	echo 'Specify if you want to hide/show a file. Use -h for more information.'
+	exit 0;
+fi
+
+if [ "$FILES" == "" ]; then
+	echo 'Specify a file. Use -h for more information.'
+	exit 0;
+fi
+
+#hide file
+if [ $HIDE -eq 1 ]; then
+	if [ ! -f $FILES ]; then
+		echo 'Unvalid file.'
+		exit 0;
+	fi
+	DIR=$(dirname $FILES);
+	BASE=$(basename $FILES);
+	NEW="$DIR/.$BASE";
+	mv "$FILES" "$NEW"
+fi
+
+#show file
+if [ $SHOW -eq 1 ]; then
+	DIR=$(dirname $FILES);
+	BASE=$(basename $FILES);
+	HIDDEN="$DIR/.$BASE";
+	
+	if [ ! -f $HIDDEN ]; then
+		echo 'Unvalid file.'
+		exit 0;
+	fi
+	
+	mv "$HIDDEN" "$FILES"
+fi
